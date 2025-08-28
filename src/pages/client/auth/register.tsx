@@ -20,7 +20,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    // console.log("Success:", values);
+    console.log("Success:", values);
 
     setIsSubmit(true);
 
@@ -47,6 +47,9 @@ const RegisterPage = () => {
   return (
     <div
       style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         height: "100vh",
         background: "#F0F4F7",
         paddingTop: 50,

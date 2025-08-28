@@ -1,9 +1,14 @@
 import axios from "services/axios.customize";
 
-export const loginAPI = (username: string, password: string) => {
+export const loginAPI = (email: string, password: string) => {
   const urlBackend = "/api/v1/auth/login";
 
-  return axios.post<IBackendRes<ILogin>>(urlBackend, { username, password });
+  const body = {
+    username: email,
+    password: password,
+  };
+
+  return axios.post<IBackendRes<ILogin>>(urlBackend, body);
 };
 
 export const registerAPI = (
