@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { FormProps } from "antd";
 import { Button, Checkbox, Divider, Form, Input } from "antd";
 import { Link } from "react-router-dom";
+import { loginAPI } from "@/services/api";
 
 type FieldType = {
   fullName?: string;
@@ -13,8 +14,14 @@ type FieldType = {
 const RegisterPage = () => {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     console.log("Success:", values);
+
+    const res = await loginAPI("admin@gmail.com", "12345");
+    console.log(">>> check res", res);
+    if (res.data) {
+      console.log(res.data.user);
+    }
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
