@@ -1,27 +1,41 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Divider, Form, Input } from "antd";
-import { Link } from "react-router-dom";
-import { loginAPI } from "@/services/api";
+import { App, Button, Divider, Form, Input } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { registerAPI } from "@/services/api";
 
 type FieldType = {
-  fullName?: string;
-  email?: string;
-  password?: string;
-  phone?: string;
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string;
 };
 
 const RegisterPage = () => {
+  // const [messageApi, contextHolderMessage] = message.useMessage();
+  const { message } = App.useApp();
+
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
 
-    const res = await loginAPI("admin@gmail.com", "12345");
-    console.log(">>> check res", res);
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    // console.log("Success:", values);
+
+    setIsSubmit(true);
+
+    const { fullName, email, password, phone } = values;
+
+    const res = await registerAPI(fullName, email, password, phone);
+    // console.log(res);
+
     if (res.data) {
-      console.log(res.data.user);
+      message.success("Đăng ký thành công!");
+      navigate("/login");
+    } else {
+      message.error(res.message);
     }
+    setIsSubmit(false);
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (

@@ -1,9 +1,9 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "@/App";
-
+import AppLayout from "@/App";
 import "@/styles/global.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { App } from "antd";
 
 import HomePage from "@/pages/client/home";
 import BookPage from "@/pages/client/book";
@@ -14,7 +14,7 @@ import RegisterPage from "@/pages/client/auth/register";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <AppLayout />,
     children: [
       { index: true, element: <HomePage /> },
       {
@@ -39,6 +39,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <App>
+      <RouterProvider router={router} />
+    </App>
   </React.StrictMode>
 );
