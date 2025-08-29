@@ -81,8 +81,6 @@ const TableUser = () => {
       actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
-        // console.log(params, sort, filter);
-
         // filter
         let query = "";
 
@@ -102,6 +100,18 @@ const TableUser = () => {
             query += `&createdAt>=${createdDateRange[0]}&createdAt<=${createdDateRange[1]}`;
           }
         }
+
+        if (sort) {
+          if (sort.createdAt) {
+            if (sort.createdAt === "ascend") {
+              query += `&sort=createdAt`;
+            } else {
+              query += `&sort=-createdAt`;
+            }
+          }
+        }
+
+        console.log(query);
 
         // load data users
         const res = await getUserAPI(query);
