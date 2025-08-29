@@ -10,6 +10,7 @@ import BookPage from "@/pages/client/book";
 import AboutPage from "@/pages/client/about";
 import LoginPage from "@/pages/client/auth/login";
 import RegisterPage from "@/pages/client/auth/register";
+import { AppProvider } from "@/components/context/app.context";
 
 const router = createBrowserRouter([
   {
@@ -39,8 +40,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+    {/* App: antd  */}
     <App>
-      <RouterProvider router={router} />
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
     </App>
   </React.StrictMode>
 );

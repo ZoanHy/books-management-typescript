@@ -8,7 +8,13 @@ export const loginAPI = (email: string, password: string) => {
     password: password,
   };
 
-  return axios.post<IBackendRes<ILogin>>(urlBackend, body);
+  const config = {
+    headers: {
+      delay: 3000,
+    },
+  };
+
+  return axios.post<IBackendRes<ILogin>>(urlBackend, body, config);
 };
 
 export const registerAPI = (

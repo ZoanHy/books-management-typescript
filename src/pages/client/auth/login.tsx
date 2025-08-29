@@ -3,6 +3,7 @@ import type { FormProps } from "antd";
 import { App, Button, Divider, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { loginAPI } from "@/services/api";
+import { useCurrentApp } from "@/components/context/app.context";
 
 type FieldType = {
   email: string;
@@ -13,6 +14,7 @@ const LoginPage = () => {
   const { notification } = App.useApp();
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const { setIsAuthenticated, setUser } = useCurrentApp();
 
   const navigate = useNavigate();
 
@@ -28,6 +30,9 @@ const LoginPage = () => {
 
     if (res.data) {
       message.success("Đăng nhập thành công!");
+
+      setIsAuthenticated(true);
+      setUser(res.data.user);
 
       localStorage.setItem("access_token", res.data.access_token);
 
