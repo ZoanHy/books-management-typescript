@@ -3,6 +3,7 @@ import AppHeader from "@/components/layout/app.header";
 import { fetchAccountAPI } from "@/services/api";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { HashLoader } from "react-spinners";
 
 function App() {
   const { setUser, isAppLoading, setIsAppLoading } = useCurrentApp();
@@ -24,8 +25,23 @@ function App() {
 
   return (
     <>
-      <AppHeader />
-      <Outlet />
+      {isAppLoading ? (
+        <HashLoader
+          color="#4096FF"
+          size={50}
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%,-50%)",
+          }}
+        />
+      ) : (
+        <>
+          <AppHeader />
+          <Outlet />
+        </>
+      )}
     </>
   );
 }
