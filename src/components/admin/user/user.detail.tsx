@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Drawer, Badge, Descriptions } from "antd";
+import { Button, Drawer, Badge, Descriptions, Avatar } from "antd";
 import type { DescriptionsProps } from "antd";
 import dayjs from "dayjs";
 import { FORMAT_DATE, FORMAT_DATE_VN } from "@/services/helper";
@@ -23,6 +23,10 @@ const UserDetail = (props: IProps) => {
     setUserDetail(null);
     setOpenUserDetail(false);
   };
+
+  const avatarUrl = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
+    userDetail?.avatar
+  }`;
 
   const items: DescriptionsProps["items"] = [
     {
@@ -51,18 +55,24 @@ const UserDetail = (props: IProps) => {
     },
     {
       key: "5",
-      label: "Status",
+      label: "Role",
       children: <Badge status="processing" text={userDetail?.role} />,
-      span: 4,
+      span: 2,
     },
     {
       key: "6",
+      label: "Avatar",
+      children: <Avatar size={40} src={avatarUrl} />,
+      span: 2,
+    },
+    {
+      key: "7",
       label: "Created At",
       children: dayjs(userDetail?.createdAt).format(FORMAT_DATE_VN),
       span: 2,
     },
     {
-      key: "7",
+      key: "8",
       label: "Updated At",
       children: dayjs(userDetail?.updatedAt).format(FORMAT_DATE_VN),
       span: 2,
