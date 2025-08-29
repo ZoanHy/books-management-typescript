@@ -1,10 +1,8 @@
-import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable, TableDropdown } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag } from "antd";
-import { useRef } from "react";
-import { ConfigProvider } from "antd";
-import enUS from "antd/lib/locale/en_US";
+import { ProTable } from "@ant-design/pro-components";
+import { Button } from "antd";
+import { useRef, useState } from "react";
 import { getUserAPI } from "@/services/api";
 
 const columns: ProColumns<IUserTable>[] = [
@@ -14,8 +12,10 @@ const columns: ProColumns<IUserTable>[] = [
     width: 48,
   },
   {
-    title: "_id",
+    title: "Id",
     dataIndex: "_id",
+    search: false,
+    render: (_, record) => <a href="#!">{record._id}</a>,
   },
   {
     title: "Fullname",
@@ -24,40 +24,38 @@ const columns: ProColumns<IUserTable>[] = [
   {
     title: "Email",
     dataIndex: "email",
+    copyable: true,
   },
   {
     title: "Created at",
     dataIndex: "createdAt",
   },
   {
-    disable: true,
-    title: "状态",
-    dataIndex: "state",
-    filters: true,
-    onFilter: true,
-    ellipsis: true,
-    valueType: "select",
-    valueEnum: {
-      all: { text: "超长".repeat(50) },
-      open: {
-        text: "未解决",
-        status: "Error",
-      },
-      closed: {
-        text: "已解决",
-        status: "Success",
-        disabled: true,
-      },
-      processing: {
-        text: "解决中",
-        status: "Processing",
-      },
-    },
+    title: "Action",
+    valueType: "option",
+    key: "option",
+    render: (text, record, _, action) => [
+      <EditOutlined
+        key="edit"
+        style={{ color: "orange", cursor: "pointer", marginRight: 15 }}
+      />,
+      <DeleteOutlined
+        key="delete"
+        style={{ color: "red", cursor: "pointer" }}
+      />,
+    ],
   },
 ];
 
 const TableUser = () => {
   const actionRef = useRef<ActionType>(null);
+  const [meta, setMeta] = useState({
+    current: 1,
+    pageSize: 5,
+    pages: 0,
+    total: 0,
+  });
+
   return (
     <ProTable<IUserTable>
       columns={columns}
@@ -67,6 +65,9 @@ const TableUser = () => {
         console.log(sort, filter);
         // load data users
         const res = await getUserAPI();
+        if (res.data) {
+          setMeta(res.data.meta);
+        }
         return {
           data: res.data?.result,
           page: 1,
@@ -74,10 +75,15 @@ const TableUser = () => {
           total: res.data?.meta.total,
         };
       }}
-      rowKey="id"
+      rowKey="_id"
       pagination={{
-        pageSize: 5,
+        showTotal: (total, range) =>
+          `${range[0]}-${range[1]} trên ${total} rows`,
+        pageSize: meta.pageSize,
+        current: meta.current,
+        total: meta.total,
         onChange: (page) => console.log(page),
+        showSizeChanger: true,
       }}
       dateFormatter="string"
       headerTitle="Table User"
