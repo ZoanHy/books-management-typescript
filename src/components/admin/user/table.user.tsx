@@ -1,9 +1,11 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { Button, DatePicker } from "antd";
 import { useRef, useState } from "react";
 import { getUserAPI } from "@/services/api";
+import dayjs from "dayjs";
+import { dateRangeValidate, FORMAT_DATE } from "@/services/helper";
 
 const columns: ProColumns<IUserTable>[] = [
   {
@@ -29,6 +31,15 @@ const columns: ProColumns<IUserTable>[] = [
   {
     title: "Created at",
     dataIndex: "createdAt",
+    valueType: "date",
+    sorter: true,
+    hideInSearch: true,
+  },
+  {
+    title: "Created at",
+    dataIndex: "createdAtRange",
+    valueType: "dateRange",
+    hideInTable: true,
   },
   {
     title: "Action",
@@ -47,8 +58,16 @@ const columns: ProColumns<IUserTable>[] = [
   },
 ];
 
+type TSearch = {
+  fullName: string;
+  email: string;
+  createdAt: string;
+  createdAtRange: string;
+};
+
 const TableUser = () => {
   const actionRef = useRef<ActionType>(null);
+
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -57,17 +76,35 @@ const TableUser = () => {
   });
 
   return (
-    <ProTable<IUserTable>
+    <ProTable<IUserTable, TSearch>
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
         // console.log(params, sort, filter);
+
+        // filter
+        let query = "";
+
+        if (params) {
+          query = `current=${params.current}&pageSize=${params.pageSize}`;
+
+          if (params.fullName) {
+            query += `&fullName=/${params.fullName}/i`;
+          }
+
+          if (params.email) {
+            query += `&email=/${params.email}/i`;
+          }
+
+          const createdDateRange = dateRangeValidate(params.createdAtRange);
+          if (createdDateRange) {
+            query += `&createdAt>=${createdDateRange[0]}&createdAt<=${createdDateRange[1]}`;
+          }
+        }
+
         // load data users
-        const res = await getUserAPI(
-          params?.current ?? 1,
-          params?.pageSize ?? 5
-        );
+        const res = await getUserAPI(query);
         if (res.data) {
           setMeta(res.data.meta);
         }
