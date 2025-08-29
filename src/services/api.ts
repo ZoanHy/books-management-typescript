@@ -64,3 +64,21 @@ export const getUserAPI = (query: string) => {
 
   return axios.get<IBackendRes<IModelPaginate<IUser>>>(urlBackend);
 };
+
+export const createUserAPI = (
+  fullName: string,
+  email: string,
+  password: string,
+  phone: string
+) => {
+  const urlBackend = "/api/v1/user";
+
+  const body = {
+    fullName: fullName,
+    email: email,
+    password: password,
+    phone: phone,
+  };
+
+  return axios.post<IBackendRes<ILogin>>(urlBackend, body);
+};

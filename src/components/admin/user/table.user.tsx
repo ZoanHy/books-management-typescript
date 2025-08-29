@@ -7,6 +7,7 @@ import { getUserAPI } from "@/services/api";
 import dayjs from "dayjs";
 import { dateRangeValidate, FORMAT_DATE } from "@/services/helper";
 import UserDetail from "@/components/admin/user/user.detail";
+import ModalUser from "@/components/admin/user/modal.user";
 
 type TSearch = {
   fullName: string;
@@ -17,8 +18,13 @@ type TSearch = {
 
 const TableUser = () => {
   const actionRef = useRef<ActionType>(null);
+
+  // view user detail
   const [openUserDetail, setOpenUserDetail] = useState<boolean>(false);
   const [userDetail, setUserDetail] = useState<IUserTable | null>(null);
+
+  // create user
+  const [isModalUserOpen, setIsModalUserOpen] = useState<boolean>(false);
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -88,6 +94,10 @@ const TableUser = () => {
     },
   ];
 
+  const refreshTaleUser = () => {
+    actionRef.current?.reload();
+  };
+
   return (
     <>
       <ProTable<IUserTable, TSearch>
@@ -115,6 +125,9 @@ const TableUser = () => {
             }
           }
 
+          // default
+          query += `&sort=-createdAt`;
+
           if (sort) {
             if (sort.createdAt) {
               if (sort.createdAt === "ascend") {
@@ -125,7 +138,7 @@ const TableUser = () => {
             }
           }
 
-          console.log(query);
+          // console.log(query);
 
           // load data users
           const res = await getUserAPI(query);
@@ -155,7 +168,8 @@ const TableUser = () => {
             key="button"
             icon={<PlusOutlined />}
             onClick={() => {
-              actionRef.current?.reload();
+              // actionRef.current?.reload();
+              setIsModalUserOpen(true);
             }}
             type="primary"
           >
@@ -170,6 +184,13 @@ const TableUser = () => {
         setOpenUserDetail={setOpenUserDetail}
         userDetail={userDetail}
         setUserDetail={setUserDetail}
+      />
+
+      {/* show modal create user */}
+      <ModalUser
+        isModalUserOpen={isModalUserOpen}
+        setIsModalUserOpen={setIsModalUserOpen}
+        refreshTaleUser={refreshTaleUser}
       />
     </>
   );
