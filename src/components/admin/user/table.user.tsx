@@ -62,9 +62,12 @@ const TableUser = () => {
       actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
-        console.log(sort, filter);
+        // console.log(params, sort, filter);
         // load data users
-        const res = await getUserAPI();
+        const res = await getUserAPI(
+          params?.current ?? 1,
+          params?.pageSize ?? 5
+        );
         if (res.data) {
           setMeta(res.data.meta);
         }
@@ -82,7 +85,6 @@ const TableUser = () => {
         pageSize: meta.pageSize,
         current: meta.current,
         total: meta.total,
-        onChange: (page) => console.log(page),
         showSizeChanger: true,
       }}
       dateFormatter="string"
