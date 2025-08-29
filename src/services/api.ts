@@ -46,3 +46,15 @@ export const fetchAccountAPI = () => {
 
   return axios.get<IBackendRes<IFetchAccount>>(urlBackend, config);
 };
+
+export const logoutAPI = () => {
+  const urlBackend = "/api/v1/auth/logout";
+
+  const config = {
+    headers: {
+      delay: 1000,
+    },
+  };
+
+  return axios.post<IBackendRes<IRegister>>(urlBackend, config);
+};

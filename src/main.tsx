@@ -6,12 +6,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { App } from "antd";
 
 import HomePage from "@/pages/client/home";
-import BookPage from "@/pages/client/book";
 import AboutPage from "@/pages/client/about";
 import LoginPage from "@/pages/client/auth/login";
 import RegisterPage from "@/pages/client/auth/register";
 import { AppProvider } from "@/components/context/app.context";
 import ProtectedRoute from "@/components/auth";
+import LayoutAdmin from "@/components/layout/layout.admin";
+import DashboardPage from "@/pages/admin/dashboard";
+import ManageBookPage from "@/pages/admin/manage.book";
+import ManageOrderPage from "@/pages/admin/manage.order";
+import ManageUserPage from "@/pages/admin/manage.user";
+import BookPage from "@/pages/client/book";
 
 const router = createBrowserRouter([
   {
@@ -35,11 +40,41 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+    ],
+  },
+  {
+    path: "admin",
+    element: <LayoutAdmin />,
+    children: [
       {
-        path: "admin",
+        index: true,
         element: (
           <ProtectedRoute>
-            <div>Admin Page</div>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "book",
+        element: (
+          <ProtectedRoute>
+            <ManageBookPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "order",
+        element: (
+          <ProtectedRoute>
+            <ManageOrderPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "user",
+        element: (
+          <ProtectedRoute>
+            <ManageUserPage />
           </ProtectedRoute>
         ),
       },

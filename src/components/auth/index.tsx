@@ -20,7 +20,7 @@ const ProtectedRoute = (props: IProps) => {
         subTitle="Bạn cần đăng nhập để truy cập trang này."
         extra={
           <Button type="primary">
-            <Link to="/login">Đăng nhập</Link>
+            <Link to="/login">Quay về trang đăng nhập</Link>
           </Button>
         }
       />
@@ -38,7 +38,11 @@ const ProtectedRoute = (props: IProps) => {
           status="403"
           title="403"
           subTitle="Bạn không có quyền truy cập trang này."
-          extra={<Button type="primary">Back Home</Button>}
+          extra={
+            <Button type="primary">
+              <Link to="/">Quay về trang chủ</Link>
+            </Button>
+          }
         />
       );
     }

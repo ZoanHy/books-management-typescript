@@ -52,7 +52,6 @@ const RegisterPage = () => {
         alignItems: "center",
         height: "100vh",
         background: "#F0F4F7",
-        paddingTop: 50,
       }}
     >
       <Form
