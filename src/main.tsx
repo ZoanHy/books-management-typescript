@@ -4,7 +4,6 @@ import AppLayout from "@/App";
 import "@/styles/global.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { App } from "antd";
-
 import HomePage from "@/pages/client/home";
 import AboutPage from "@/pages/client/about";
 import LoginPage from "@/pages/client/auth/login";
@@ -17,6 +16,9 @@ import ManageBookPage from "@/pages/admin/manage.book";
 import ManageOrderPage from "@/pages/admin/manage.order";
 import ManageUserPage from "@/pages/admin/manage.user";
 import BookPage from "@/pages/client/book";
+import { ConfigProvider } from "antd";
+import enUS from "antd/locale/en_US";
+import viVN from "antd/locale/vi_VN";
 
 const router = createBrowserRouter([
   {
@@ -95,7 +97,9 @@ createRoot(document.getElementById("root")!).render(
     {/* App: antd  */}
     <App>
       <AppProvider>
-        <RouterProvider router={router} />
+        <ConfigProvider locale={enUS}>
+          <RouterProvider router={router} />
+        </ConfigProvider>
       </AppProvider>
     </App>
   </React.StrictMode>
