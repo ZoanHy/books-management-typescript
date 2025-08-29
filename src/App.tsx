@@ -6,7 +6,8 @@ import { Outlet } from "react-router-dom";
 import { HashLoader } from "react-spinners";
 
 function App() {
-  const { setUser, isAppLoading, setIsAppLoading } = useCurrentApp();
+  const { setUser, isAppLoading, setIsAppLoading, setIsAuthenticated } =
+    useCurrentApp();
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -15,6 +16,7 @@ function App() {
 
       if (res.data) {
         setUser(res.data.user);
+        setIsAuthenticated(true);
       }
 
       setIsAppLoading(false);
