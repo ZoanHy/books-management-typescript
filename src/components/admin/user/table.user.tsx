@@ -1,4 +1,10 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CloudUploadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExportOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { Button, DatePicker } from "antd";
@@ -8,6 +14,7 @@ import dayjs from "dayjs";
 import { dateRangeValidate, FORMAT_DATE } from "@/services/helper";
 import UserDetail from "@/components/admin/user/user.detail";
 import ModalUser from "@/components/admin/user/modal.user";
+import ImportUserModal from "@/components/admin/user/data/import.user";
 
 type TSearch = {
   fullName: string;
@@ -25,6 +32,10 @@ const TableUser = () => {
 
   // create user
   const [isModalUserOpen, setIsModalUserOpen] = useState<boolean>(false);
+
+  // import user
+  const [isModalImportUserOpen, setIsModalImportUserOpen] =
+    useState<boolean>(false);
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -166,10 +177,32 @@ const TableUser = () => {
         toolBarRender={() => [
           <Button
             key="button"
+            icon={<ExportOutlined />}
+            onClick={() => {
+              // actionRef.current?.reload();
+            }}
+            type="primary"
+          >
+            Export
+          </Button>,
+
+          <Button
+            key="button"
+            icon={<CloudUploadOutlined />}
+            onClick={() => {
+              setIsModalImportUserOpen(true);
+            }}
+            type="primary"
+          >
+            Import
+          </Button>,
+
+          <Button
+            key="button"
             icon={<PlusOutlined />}
             onClick={() => {
               // actionRef.current?.reload();
-              setIsModalUserOpen(true);
+              setIsModalImportUserOpen(true);
             }}
             type="primary"
           >
@@ -191,6 +224,12 @@ const TableUser = () => {
         isModalUserOpen={isModalUserOpen}
         setIsModalUserOpen={setIsModalUserOpen}
         refreshTaleUser={refreshTaleUser}
+      />
+
+      {/* show modal import user */}
+      <ImportUserModal
+        isModalImportUserOpen={isModalImportUserOpen}
+        setIsModalImportUserOpen={setIsModalImportUserOpen}
       />
     </>
   );
