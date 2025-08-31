@@ -7,9 +7,9 @@ import {
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button, DatePicker } from "antd";
+import { App, Button, DatePicker, Popconfirm } from "antd";
 import { use, useEffect, useRef, useState } from "react";
-import { getUserAPI } from "@/services/api";
+import { deleteUserAPI, getUserAPI } from "@/services/api";
 import dayjs from "dayjs";
 import { dateRangeValidate, FORMAT_DATE_DEFAULT } from "@/services/helper";
 import UserDetail from "@/components/admin/user/user.detail";
@@ -27,6 +27,8 @@ type TSearch = {
 
 const TableUser = () => {
   const actionRef = useRef<ActionType>(null);
+
+  const { message, notification } = App.useApp();
 
   // view user detail
   const [openUserDetail, setOpenUserDetail] = useState<boolean>(false);
@@ -48,6 +50,27 @@ const TableUser = () => {
   // update user
   const [isModalUserUpdateOpen, setIsModalUserUpdateOpen] =
     useState<boolean>(false);
+
+  // delete user
+
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const handleDeleteUser = async (item: IUserTable) => {
+    setIsDelete(true);
+
+    const res = await deleteUserAPI(item._id);
+
+    if (res.data) {
+      message.success("Xóa người dùng thành công");
+      refreshTableUser();
+    } else {
+      notification.error({
+        message: "Xóa người dùng thất bại!",
+        description: res.message,
+      });
+    }
+
+    setIsDelete(false);
+  };
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -113,10 +136,22 @@ const TableUser = () => {
             setIsModalUserUpdateOpen(true);
           }}
         />,
-        <DeleteOutlined
-          key="delete"
-          style={{ color: "red", cursor: "pointer" }}
-        />,
+        <Popconfirm
+          title="Xác nhận xóa người dùng"
+          description="Bạn có chắc chắn muốn xóa người dùng này?"
+          onConfirm={() => handleDeleteUser(record)}
+          okButtonProps={{ loading: isDelete }}
+          onCancel={() => {}}
+          okText="Xác nhận"
+          cancelText="Hủy"
+          placement="left"
+        >
+          <DeleteOutlined
+            key="delete"
+            style={{ color: "red", cursor: "pointer" }}
+          />
+          ,
+        </Popconfirm>,
       ],
     },
   ];
