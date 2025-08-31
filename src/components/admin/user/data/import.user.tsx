@@ -7,6 +7,7 @@ import TableImportUser from "@/components/admin/user/data/table.import.user";
 import ExcelJS from "exceljs";
 import { Buffer } from "buffer";
 import { bulkCreateUserAPI } from "@/services/api";
+import sampleFile from "@/assets/template/data-users-test.xlsx";
 
 interface IProps {
   isModalImportUserOpen: boolean;
@@ -154,8 +155,11 @@ const ImportUserModal = (props: IProps) => {
             Click or drag file to this area to upload
           </p>
           <p className="ant-upload-hint">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
+            Support for a single or bulk upload. Only accept .csv, .xls, .xlsx.
+            or{" "}
+            <a href={sampleFile} download onClick={(e) => e.stopPropagation()}>
+              Download Sample File
+            </a>
           </p>
         </Dragger>
 
