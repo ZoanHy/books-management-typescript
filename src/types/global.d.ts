@@ -56,9 +56,9 @@ declare global {
     phone: string;
     role: string;
     avatar: string;
-    isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
+    isActive: boolean;
   }
 
   interface IUserDataImport {

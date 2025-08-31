@@ -11,10 +11,11 @@ import { Button, DatePicker } from "antd";
 import { useRef, useState } from "react";
 import { getUserAPI } from "@/services/api";
 import dayjs from "dayjs";
-import { dateRangeValidate, FORMAT_DATE } from "@/services/helper";
+import { dateRangeValidate, FORMAT_DATE_DEFAULT } from "@/services/helper";
 import UserDetail from "@/components/admin/user/user.detail";
 import ModalUser from "@/components/admin/user/modal.user";
 import ImportUserModal from "@/components/admin/user/data/import.user";
+import { CSVLink, CSVDownload } from "react-csv";
 
 type TSearch = {
   fullName: string;
@@ -36,6 +37,10 @@ const TableUser = () => {
   // import user
   const [isModalImportUserOpen, setIsModalImportUserOpen] =
     useState<boolean>(false);
+
+  // export user
+
+  const [userExport, setUserExport] = useState<IUserTable[]>([]);
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -109,6 +114,43 @@ const TableUser = () => {
     actionRef.current?.reload();
   };
 
+  // export user
+
+  const handleExportUser = () => {
+    console.log("userExport", userExport);
+
+    let arrUser: any[] = [];
+
+    arrUser.push([
+      "_id",
+      "fullName",
+      "email",
+      "phone",
+      "role",
+      "avatar",
+      "createdAt",
+      "updatedAt",
+    ]);
+
+    arrUser = [
+      arrUser,
+      ...userExport.map((user) => [
+        user._id,
+        user.fullName,
+        user.email,
+        user.phone,
+        user.role,
+        user.avatar,
+        dayjs(user.createdAt).format(FORMAT_DATE_DEFAULT),
+        dayjs(user.updatedAt).format(FORMAT_DATE_DEFAULT),
+      ]),
+    ];
+
+    console.log("arrUser", arrUser);
+
+    setUserExport(arrUser);
+  };
+
   return (
     <>
       <ProTable<IUserTable, TSearch>
@@ -155,6 +197,7 @@ const TableUser = () => {
           const res = await getUserAPI(query);
           if (res.data) {
             setMeta(res.data.meta);
+            setUserExport(res.data.result);
           }
           return {
             data: res.data?.result,
@@ -178,12 +221,12 @@ const TableUser = () => {
           <Button
             key="button"
             icon={<ExportOutlined />}
-            onClick={() => {
-              // actionRef.current?.reload();
-            }}
+            onClick={handleExportUser}
             type="primary"
           >
-            Export
+            <CSVLink data={userExport} filename={"user.csv"}>
+              Export
+            </CSVLink>
           </Button>,
 
           <Button

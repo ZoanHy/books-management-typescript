@@ -20,6 +20,8 @@ const ImportUserModal = (props: IProps) => {
 
   const { isModalImportUserOpen, setIsModalImportUserOpen, refreshTableUser } =
     props;
+
+  // import user
   const [userDataSource, setUserDataSource] = useState<IUserDataImport[]>([]);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
@@ -34,7 +36,7 @@ const ImportUserModal = (props: IProps) => {
 
     const res = await bulkCreateUserAPI(usersDataBulk);
 
-    console.log(">>> check res: ", res);
+    // console.log(">>> check res: ", res);
 
     if (res.data) {
       notification.success({
