@@ -60,4 +60,10 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+
+  interface IUserDataImport {
+    fullName: string;
+    email: string;
+    phone: string;
+  }
 }

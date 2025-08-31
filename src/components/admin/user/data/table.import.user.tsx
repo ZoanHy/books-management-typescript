@@ -3,32 +3,36 @@ import type { ProColumns } from "@ant-design/pro-components";
 import { ProTable, TableDropdown } from "@ant-design/pro-components";
 import { Button } from "antd";
 
-const tableListDataSource: IUserTable[] = [];
+interface IProps {
+  userDataSource: IUserDataImport[];
+}
 
-const columns: ProColumns<IUserTable>[] = [
-  {
-    dataIndex: "index",
-    valueType: "indexBorder",
-    width: 48,
-  },
-  {
-    title: "Tên hiển thị",
-    dataIndex: "fullName",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-  },
-  {
-    title: "Số điện thoại",
-    dataIndex: "phone",
-  },
-];
+const TableImportUser = (props: IProps) => {
+  const { userDataSource } = props;
 
-const TableImportUser = () => {
+  const columns: ProColumns<IUserDataImport>[] = [
+    {
+      dataIndex: "index",
+      valueType: "indexBorder",
+      width: 48,
+    },
+    {
+      title: "Tên hiển thị",
+      dataIndex: "fullName",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+    },
+  ];
+
   return (
-    <ProTable<IUserTable>
-      dataSource={tableListDataSource}
+    <ProTable<IUserDataImport>
+      dataSource={userDataSource}
       rowKey="key"
       pagination={{
         showQuickJumper: true,

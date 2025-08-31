@@ -4,24 +4,19 @@ import type { UploadProps } from "antd/lib";
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import TableImportUser from "@/components/admin/user/data/table.import.user";
-
-interface IFileRequest {
-  file: File;
-  onSuccess: (response: any) => void;
-  onError: (error: any) => void;
-}
+import ExcelJS from "exceljs";
+import { Buffer } from "buffer";
 
 interface IProps {
   isModalImportUserOpen: boolean;
-  setIsModalImportUserOpen: (v) => void;
+  setIsModalImportUserOpen: (v: boolean) => void;
 }
 
 const ImportUserModal = (props: IProps) => {
   const { message } = App.useApp();
 
   const { isModalImportUserOpen, setIsModalImportUserOpen } = props;
-
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [userDataSource, setUserDataSource] = useState<IUserDataImport[]>([]);
 
   const showModal = () => {
     setIsModalImportUserOpen(true);
@@ -54,13 +49,50 @@ const ImportUserModal = (props: IProps) => {
         if (onSuccess) onSuccess("ok");
       }, 1000);
     },
-    onChange(info) {
+    async onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
         console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
+        // console.log(">>> check file done: ", info.file);
+        // file done
+        console.log(info.file);
+
+        if (info.fileList && info.fileList.length > 0) {
+          const file = info.fileList[0].originFileObj as File;
+          // js file to excel
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(buffer.buffer);
+
+          // excel to json
+          let jsonData: IUserDataImport[] = [];
+          workbook.worksheets.forEach(function (sheet) {
+            // read first row as data keys
+            let firstRow = sheet.getRow(1);
+            console.log(firstRow);
+            if (!firstRow.cellCount) return;
+            let keys: string[] = firstRow.values as string[];
+            console.log(keys);
+
+            sheet.eachRow((row, rowNumber) => {
+              if (rowNumber == 1) return;
+              let values: string[] = row.values as string[];
+              let obj: any = {};
+              for (let i = 0; i < keys.length; i++) {
+                if (keys[i]) {
+                  obj[keys[i]] = values[i];
+                }
+              }
+              jsonData.push(obj);
+            });
+          });
+
+          setUserDataSource(jsonData);
+        }
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -77,10 +109,14 @@ const ImportUserModal = (props: IProps) => {
         open={isModalImportUserOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        maskClosable={false}
         width={"45vw"}
         okText="Import data"
         cancelText="Cancel"
+        okButtonProps={{
+          disabled: !userDataSource || userDataSource.length === 0,
+        }}
+        maskClosable={false}
+        destroyOnHidden={false}
       >
         <Dragger {...propsUpload}>
           <p className="ant-upload-drag-icon">
@@ -95,7 +131,7 @@ const ImportUserModal = (props: IProps) => {
           </p>
         </Dragger>
 
-        <TableImportUser />
+        <TableImportUser userDataSource={userDataSource} />
       </Modal>
     </>
   );
