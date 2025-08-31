@@ -83,9 +83,6 @@ const UserDetail = (props: IProps) => {
     <>
       {userDetail && (
         <>
-          <Button type="primary" onClick={showDrawer}>
-            Open
-          </Button>
           <Drawer
             title="Chức năng xem chi tiết"
             closable={{ "aria-label": "Close Button" }}
