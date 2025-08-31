@@ -8,7 +8,7 @@ import {
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { Button, DatePicker } from "antd";
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { getUserAPI } from "@/services/api";
 import dayjs from "dayjs";
 import { dateRangeValidate, FORMAT_DATE_DEFAULT } from "@/services/helper";
@@ -16,6 +16,7 @@ import UserDetail from "@/components/admin/user/user.detail";
 import ModalUser from "@/components/admin/user/modal.user";
 import ImportUserModal from "@/components/admin/user/data/import.user";
 import { CSVLink, CSVDownload } from "react-csv";
+import UpdateUser from "@/components/admin/user/update.user";
 
 type TSearch = {
   fullName: string;
@@ -30,6 +31,9 @@ const TableUser = () => {
   // view user detail
   const [openUserDetail, setOpenUserDetail] = useState<boolean>(false);
   const [userDetail, setUserDetail] = useState<IUserTable | null>(null);
+  const [userDetailUpdate, setUserDetailUpdate] = useState<IUserTable | null>(
+    null
+  );
 
   // create user
   const [isModalUserOpen, setIsModalUserOpen] = useState<boolean>(false);
@@ -39,8 +43,11 @@ const TableUser = () => {
     useState<boolean>(false);
 
   // export user
-
   const [userExport, setUserExport] = useState<IUserTable[]>([]);
+
+  // update user
+  const [isModalUserUpdateOpen, setIsModalUserUpdateOpen] =
+    useState<boolean>(false);
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -101,6 +108,10 @@ const TableUser = () => {
         <EditOutlined
           key="edit"
           style={{ color: "orange", cursor: "pointer", marginRight: 15 }}
+          onClick={() => {
+            setUserDetailUpdate(record);
+            setIsModalUserUpdateOpen(true);
+          }}
         />,
         <DeleteOutlined
           key="delete"
@@ -273,6 +284,15 @@ const TableUser = () => {
       <ImportUserModal
         isModalImportUserOpen={isModalImportUserOpen}
         setIsModalImportUserOpen={setIsModalImportUserOpen}
+        refreshTableUser={refreshTableUser}
+      />
+
+      {/* show modal update user */}
+      <UpdateUser
+        isModalUserUpdateOpen={isModalUserUpdateOpen}
+        setIsModalUserUpdateOpen={setIsModalUserUpdateOpen}
+        userDetailUpdate={userDetailUpdate}
+        setUserDetailUpdate={setUserDetailUpdate}
         refreshTableUser={refreshTableUser}
       />
     </>

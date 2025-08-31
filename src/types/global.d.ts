@@ -73,4 +73,12 @@ declare global {
     countError: number;
     message: string | null;
   }
+
+  interface IUpdateUser {
+    acknowledged: boolean;
+    modifiedCount: number;
+    upsertedId: number | null;
+    upsertedCount: number;
+    matchedCount: number;
+  }
 }

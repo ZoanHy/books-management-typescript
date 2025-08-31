@@ -44,7 +44,7 @@ const ModalUser = (props: IProps) => {
       message.success("Thêm mới người dùng thành công!");
       setIsModalUserOpen(false);
       form.resetFields();
-      refreshTaleUser();
+      refreshTableUser();
     } else {
       message.error("Thêm mới người dùng thất bại!");
     }
