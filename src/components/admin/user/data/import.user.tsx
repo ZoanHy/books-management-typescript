@@ -6,28 +6,52 @@ import { InboxOutlined } from "@ant-design/icons";
 import TableImportUser from "@/components/admin/user/data/table.import.user";
 import ExcelJS from "exceljs";
 import { Buffer } from "buffer";
+import { bulkCreateUserAPI } from "@/services/api";
 
 interface IProps {
   isModalImportUserOpen: boolean;
   setIsModalImportUserOpen: (v: boolean) => void;
+  refreshTableUser: () => void;
 }
 
 const ImportUserModal = (props: IProps) => {
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
 
-  const { isModalImportUserOpen, setIsModalImportUserOpen } = props;
+  const { isModalImportUserOpen, setIsModalImportUserOpen, refreshTableUser } =
+    props;
   const [userDataSource, setUserDataSource] = useState<IUserDataImport[]>([]);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const showModal = () => {
-    setIsModalImportUserOpen(true);
-  };
+  const handleBulkCreateUser = async () => {
+    setIsSubmit(true);
+    const usersDataBulk = userDataSource.map((user) => ({
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
+      password: import.meta.env.VITE_USER_CREATE_DEFAULT_PASSWORD,
+    }));
 
-  const handleOk = () => {
+    const res = await bulkCreateUserAPI(usersDataBulk);
+
+    console.log(">>> check res: ", res);
+
+    if (res.data) {
+      notification.success({
+        message: "Import users successfully",
+        description: `Success: ${res.data.countSuccess}, Error: ${res.data.countError}`,
+      });
+
+      refreshTableUser();
+    }
+
     setIsModalImportUserOpen(false);
+    setUserDataSource([]);
+    setIsSubmit(false);
   };
 
   const handleCancel = () => {
     setIsModalImportUserOpen(false);
+    setUserDataSource([]);
   };
 
   const propsUpload: UploadProps = {
@@ -52,13 +76,13 @@ const ImportUserModal = (props: IProps) => {
     async onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
         // console.log(">>> check file done: ", info.file);
         // file done
-        console.log(info.file);
+        // console.log(info.file);
 
         if (info.fileList && info.fileList.length > 0) {
           const file = info.fileList[0].originFileObj as File;
@@ -73,23 +97,26 @@ const ImportUserModal = (props: IProps) => {
           workbook.worksheets.forEach(function (sheet) {
             // read first row as data keys
             let firstRow = sheet.getRow(1);
-            console.log(firstRow);
+            // console.log(firstRow);
             if (!firstRow.cellCount) return;
             let keys: string[] = firstRow.values as string[];
-            console.log(keys);
+            // console.log(keys);
 
             sheet.eachRow((row, rowNumber) => {
               if (rowNumber == 1) return;
               let values: string[] = row.values as string[];
               let obj: any = {};
-              for (let i = 0; i < keys.length; i++) {
-                if (keys[i]) {
-                  obj[keys[i]] = values[i];
-                }
+              for (let i = 1; i < keys.length; i++) {
+                obj[keys[i]] = values[i];
               }
               jsonData.push(obj);
             });
           });
+
+          jsonData = jsonData.map((item, index) => ({
+            ...item,
+            id: index + 1,
+          }));
 
           setUserDataSource(jsonData);
         }
@@ -107,13 +134,14 @@ const ImportUserModal = (props: IProps) => {
         title="Import data user"
         closable={{ "aria-label": "Custom Close Button" }}
         open={isModalImportUserOpen}
-        onOk={handleOk}
+        onOk={handleBulkCreateUser}
         onCancel={handleCancel}
         width={"45vw"}
         okText="Import data"
         cancelText="Cancel"
         okButtonProps={{
           disabled: !userDataSource || userDataSource.length === 0,
+          loading: isSubmit,
         }}
         maskClosable={false}
         destroyOnHidden={false}

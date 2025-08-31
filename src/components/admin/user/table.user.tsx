@@ -105,7 +105,7 @@ const TableUser = () => {
     },
   ];
 
-  const refreshTaleUser = () => {
+  const refreshTableUser = () => {
     actionRef.current?.reload();
   };
 
@@ -223,13 +223,14 @@ const TableUser = () => {
       <ModalUser
         isModalUserOpen={isModalUserOpen}
         setIsModalUserOpen={setIsModalUserOpen}
-        refreshTaleUser={refreshTaleUser}
+        refreshTableUser={refreshTableUser}
       />
 
       {/* show modal import user */}
       <ImportUserModal
         isModalImportUserOpen={isModalImportUserOpen}
         setIsModalImportUserOpen={setIsModalImportUserOpen}
+        refreshTableUser={refreshTableUser}
       />
     </>
   );

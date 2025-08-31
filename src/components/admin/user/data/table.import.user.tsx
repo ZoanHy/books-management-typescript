@@ -33,7 +33,7 @@ const TableImportUser = (props: IProps) => {
   return (
     <ProTable<IUserDataImport>
       dataSource={userDataSource}
-      rowKey="key"
+      rowKey="id"
       pagination={{
         showQuickJumper: true,
       }}

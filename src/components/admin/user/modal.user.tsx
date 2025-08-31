@@ -15,7 +15,7 @@ type FieldType = {
 interface IProps {
   isModalUserOpen: boolean;
   setIsModalUserOpen: (v: boolean) => void;
-  refreshTaleUser: () => void;
+  refreshTableUser: () => void;
 }
 
 const ModalUser = (props: IProps) => {
@@ -23,7 +23,7 @@ const ModalUser = (props: IProps) => {
 
   const [form] = useForm();
 
-  const { isModalUserOpen, setIsModalUserOpen, refreshTaleUser } = props;
+  const { isModalUserOpen, setIsModalUserOpen, refreshTableUser } = props;
 
   const handleFormSubmit = () => {
     form.submit();

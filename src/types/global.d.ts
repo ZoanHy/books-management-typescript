@@ -62,8 +62,15 @@ declare global {
   }
 
   interface IUserDataImport {
+    id: number;
     fullName: string;
     email: string;
     phone: string;
+  }
+
+  interface IBulkCreateUser {
+    countSuccess: number;
+    countError: number;
+    message: string | null;
   }
 }
