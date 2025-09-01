@@ -1,9 +1,8 @@
+import DetailBook from "@/components/admin/book/detail/detail.book";
 import { getBookAPI } from "@/services/api";
 import {
-  CloudUploadOutlined,
   DeleteOutlined,
   EditOutlined,
-  EllipsisOutlined,
   ExportOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
@@ -20,6 +19,10 @@ interface TSearch {
 const TableBook = () => {
   const actionRef = useRef<ActionType>(null);
 
+  // view detail book
+  const [openBookDetail, setOpenBookDetail] = useState<boolean>(false);
+  const [bookDetail, setBookDetail] = useState<IBookTable | null>(null);
+
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -33,7 +36,13 @@ const TableBook = () => {
       dataIndex: "_id",
       search: false,
       render: (_, record) => (
-        <a href="#!" onClick={() => {}}>
+        <a
+          href="#!"
+          onClick={() => {
+            setBookDetail(record);
+            setOpenBookDetail(true);
+          }}
+        >
           {record._id}
         </a>
       ),
@@ -102,89 +111,103 @@ const TableBook = () => {
   ];
 
   return (
-    <ProTable<IBookTable, TSearch>
-      columns={columns}
-      actionRef={actionRef}
-      cardBordered
-      request={async (params, sort, filter) => {
-        let query = "";
+    <>
+      <ProTable<IBookTable, TSearch>
+        columns={columns}
+        actionRef={actionRef}
+        cardBordered
+        request={async (params, sort, filter) => {
+          let query = "";
 
-        if (params) {
-          query = `current=${params.current}&pageSize=${params.pageSize}`;
+          if (params) {
+            query = `current=${params.current}&pageSize=${params.pageSize}`;
 
-          if (params.mainText) {
-            query += `&mainText=/${params.mainText}/i`;
+            if (params.mainText) {
+              query += `&mainText=/${params.mainText}/i`;
+            }
+
+            if (params.author) {
+              query += `&author=/${params.author}/i`;
+            }
           }
 
-          if (params.author) {
-            query += `&author=/${params.author}/i`;
+          if (sort) {
+            if (sort.mainText) {
+              query +=
+                sort.mainText === "ascend"
+                  ? `&sort=mainText`
+                  : `&sort=-mainText`;
+            }
+
+            if (sort.category) {
+              query +=
+                sort.category === "ascend"
+                  ? `&sort=category`
+                  : `&sort=-category`;
+            }
+
+            if (sort.price) {
+              query += sort.price === "ascend" ? `&sort=price` : `&sort=-price`;
+            }
+
+            if (sort.createdAt) {
+              query +=
+                sort.createdAt === "ascend"
+                  ? `&sort=createdAt`
+                  : `&sort=-createdAt`;
+            }
           }
-        }
 
-        if (sort) {
-          if (sort.mainText) {
-            query +=
-              sort.mainText === "ascend" ? `&sort=mainText` : `&sort=-mainText`;
+          const res = await getBookAPI(query);
+
+          if (res.data) {
+            setMeta(res.data.meta);
           }
 
-          if (sort.category) {
-            query +=
-              sort.category === "ascend" ? `&sort=category` : `&sort=-category`;
-          }
+          return {
+            data: res.data?.result,
+            total: res.data?.meta.total,
+            success: true,
+            page: 1,
+          };
+        }}
+        rowKey="_id"
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} trên ${total} rows`,
+          pageSize: meta.pageSize,
+          current: meta.current,
+          total: meta.total,
+          showSizeChanger: true,
+        }}
+        dateFormatter="string"
+        headerTitle="Table book"
+        toolBarRender={() => [
+          <Button key="button" icon={<ExportOutlined />} type="primary">
+            Export
+          </Button>,
 
-          if (sort.price) {
-            query += sort.price === "ascend" ? `&sort=price` : `&sort=-price`;
-          }
+          <Button
+            key="button"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              actionRef.current?.reload();
+            }}
+            type="primary"
+          >
+            Add new
+          </Button>,
+        ]}
+      />
 
-          if (sort.createdAt) {
-            query +=
-              sort.createdAt === "ascend"
-                ? `&sort=createdAt`
-                : `&sort=-createdAt`;
-          }
-        }
-
-        const res = await getBookAPI(query);
-
-        if (res.data) {
-          setMeta(res.data.meta);
-        }
-
-        return {
-          data: res.data?.result,
-          total: res.data?.meta.total,
-          success: true,
-          page: 1,
-        };
-      }}
-      rowKey="_id"
-      pagination={{
-        showTotal: (total, range) =>
-          `${range[0]}-${range[1]} trên ${total} rows`,
-        pageSize: meta.pageSize,
-        current: meta.current,
-        total: meta.total,
-        showSizeChanger: true,
-      }}
-      dateFormatter="string"
-      headerTitle="Table book"
-      toolBarRender={() => [
-        <Button key="button" icon={<ExportOutlined />} type="primary">
-          Export
-        </Button>,
-
-        <Button
-          key="button"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            actionRef.current?.reload();
-          }}
-          type="primary"
-        >
-          Add new
-        </Button>,
-      ]}
-    />
+      {/* show modal detail book  */}
+      <DetailBook
+        openBookDetail={openBookDetail}
+        setOpenBookDetail={setOpenBookDetail}
+        bookDetail={bookDetail}
+        setBookDetail={setBookDetail}
+      />
+    </>
   );
 };
 

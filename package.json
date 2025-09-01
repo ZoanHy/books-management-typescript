@@ -27,6 +27,7 @@
     "react-spinners": "^0.17.0",
     "sass": "^1.91.0",
     "ts-transformer-keys": "^0.4.4",
+    "uuid": "^11.1.0",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {

@@ -3,101 +3,96 @@ import { Button, Drawer, Badge, Descriptions, Avatar } from "antd";
 import type { DescriptionsProps } from "antd";
 import dayjs from "dayjs";
 import { FORMAT_DATE_DEFAULT, FORMAT_DATE_VN } from "@/services/helper";
+import PreviewBook from "@/components/admin/book/detail/preview.book";
 
 interface IProps {
-  openUserDetail: boolean;
-  setOpenUserDetail: (v: boolean) => void;
-  userDetail: IUserTable | null;
-  setUserDetail: (v: IUserTable | null) => void;
+  openBookDetail: boolean;
+  setOpenBookDetail: (v: boolean) => void;
+  bookDetail: IBookTable | null;
+  setBookDetail: (v: IBookTable | null) => void;
 }
 
-const UserDetail = (props: IProps) => {
-  const { openUserDetail, setOpenUserDetail, userDetail, setUserDetail } =
+const BookDetail = (props: IProps) => {
+  const { openBookDetail, setOpenBookDetail, bookDetail, setBookDetail } =
     props;
 
   const showDrawer = () => {
-    setOpenUserDetail(true);
+    setOpenBookDetail(true);
   };
 
   const onClose = () => {
-    setUserDetail(null);
-    setOpenUserDetail(false);
+    setBookDetail(null);
+    setOpenBookDetail(false);
   };
 
-  const avatarUrl = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
-    userDetail?.avatar
-  }`;
+  // console.log(bookDetail?.slider);
 
   const items: DescriptionsProps["items"] = [
     {
       key: "1",
       label: "Id",
-      children: userDetail?._id,
+      children: bookDetail?._id,
       span: 2,
     },
     {
       key: "2",
-      label: "Tên hiển thị",
-      children: userDetail?.fullName,
+      label: "Tên sách",
+      children: bookDetail?.mainText,
       span: 2,
     },
     {
       key: "3",
-      label: "Email",
-      children: userDetail?.email,
+      label: "Tác giả",
+      children: bookDetail?.author,
       span: 2,
     },
     {
       key: "4",
-      label: "Số điện thoại",
-      children: userDetail?.phone,
+      label: "Giá tiền",
+      children: bookDetail?.price.toLocaleString() + " đ",
       span: 2,
     },
     {
       key: "5",
-      label: "Role",
-      children: <Badge status="processing" text={userDetail?.role} />,
-      span: 2,
+      label: "Thể loại",
+      children: <Badge status="processing" text={bookDetail?.category} />,
+      span: 4,
     },
     {
       key: "6",
-      label: "Avatar",
-      children: <Avatar size={40} src={avatarUrl} />,
+      label: "Created At",
+      children: <>{dayjs(bookDetail?.createdAt).format(FORMAT_DATE_VN)}</>,
       span: 2,
     },
     {
       key: "7",
-      label: "Created At",
-      children: dayjs(userDetail?.createdAt).format(FORMAT_DATE_VN),
-      span: 2,
-    },
-    {
-      key: "8",
       label: "Updated At",
-      children: dayjs(userDetail?.updatedAt).format(FORMAT_DATE_VN),
+      children: dayjs(bookDetail?.updatedAt).format(FORMAT_DATE_VN),
       span: 2,
     },
   ];
 
   return (
     <>
-      {userDetail && (
+      {bookDetail && (
         <>
           <Drawer
             title="Chức năng xem chi tiết"
             closable={{ "aria-label": "Close Button" }}
             onClose={onClose}
-            open={openUserDetail}
+            open={openBookDetail}
             // open={true}
             width={"50vw"}
             maskClosable={false}
           >
             <Descriptions
-              title="Thông tin user"
+              title="Thông tin book"
               bordered
               items={items}
               column={4}
             />
+
+            <PreviewBook bookDetail={bookDetail} />
           </Drawer>
         </>
       )}
@@ -105,4 +100,4 @@ const UserDetail = (props: IProps) => {
   );
 };
 
-export default UserDetail;
+export default BookDetail;
