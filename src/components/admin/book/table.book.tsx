@@ -1,3 +1,4 @@
+import CreateBook from "@/components/admin/book/create.book";
 import DetailBook from "@/components/admin/book/detail/detail.book";
 import { getBookAPI } from "@/services/api";
 import {
@@ -22,6 +23,10 @@ const TableBook = () => {
   // view detail book
   const [openBookDetail, setOpenBookDetail] = useState<boolean>(false);
   const [bookDetail, setBookDetail] = useState<IBookTable | null>(null);
+
+  // create book
+  const [isCreateBookModalOpen, setIsCreateBookModalOpen] =
+    useState<boolean>(false);
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -110,6 +115,10 @@ const TableBook = () => {
     },
   ];
 
+  const refreshTableBook = () => {
+    actionRef.current?.reload();
+  };
+
   return (
     <>
       <ProTable<IBookTable, TSearch>
@@ -191,7 +200,7 @@ const TableBook = () => {
             key="button"
             icon={<PlusOutlined />}
             onClick={() => {
-              actionRef.current?.reload();
+              setIsCreateBookModalOpen(true);
             }}
             type="primary"
           >
@@ -206,6 +215,13 @@ const TableBook = () => {
         setOpenBookDetail={setOpenBookDetail}
         bookDetail={bookDetail}
         setBookDetail={setBookDetail}
+      />
+
+      {/* show modal create book */}
+      <CreateBook
+        isCreateBookModalOpen={isCreateBookModalOpen}
+        setIsCreateBookModalOpen={setIsCreateBookModalOpen}
+        refreshTableBook={refreshTableBook}
       />
     </>
   );

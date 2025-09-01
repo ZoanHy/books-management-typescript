@@ -1,3 +1,4 @@
+import { fetchAccountAPI } from "@/services/api";
 import axios from "services/axios.customize";
 
 export const loginAPI = (email: string, password: string) => {
@@ -124,4 +125,10 @@ export const getBookAPI = (query: string) => {
   const urlBackend = `/api/v1/book?${query}`;
 
   return axios.get<IBackendRes<IModelPaginate<IBookTable>>>(urlBackend);
+};
+
+export const getCategoryBookAPI = () => {
+  const urlBackend = "/api/v1/database/category";
+
+  return axios.get<IBackendRes<string[]>>(urlBackend);
 };
